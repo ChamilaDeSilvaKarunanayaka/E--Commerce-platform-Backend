@@ -1,0 +1,25 @@
+{
+  "name": "e--commerce-platform-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChamilaDeSilvaKarunanayaka/E--Commerce-platform-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChamilaDeSilvaKarunanayaka/E--Commerce-platform-Backend/issues"
+  },
+  "homepage": "https://github.com/ChamilaDeSilvaKarunanayaka/E--Commerce-platform-Backend#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
