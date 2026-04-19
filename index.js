@@ -1,13 +1,43 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from "dotenv";
-import Student from './models/student.js';
+import studentRouter from './routes/studentRouter.js';
+import productRouter from './routes/productRouter.js';
+import userRouter from './routes/userRouter.js';
+import jwt from "jsonwebtoken";
 
 dotenv.config()
 
 const app = express();
 
 app.use(express.json())  // Middleware to parse JSON bodies in requests
+
+app.use(
+    (req, res, next) => { // Middleware to set CORS headers
+        const tokenString = req.header("Authorization")
+        if(tokenString != null){
+            const token = tokenString.replace("Bearer ", "")
+
+            jwt.verify(token, "dilcsksecretkey" ,
+                (err, decoded) => {
+                    if(err,decoded != null){
+                        req.user = decoded
+                        next()
+                         
+                    }else{
+                        console.log("invalid token")
+                        res.status(403).json({
+                            message : "invalid token"
+                        })  
+                    }
+                    
+        })
+        
+    }else{
+        next()
+    }
+ }
+)
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>{
@@ -16,58 +46,9 @@ mongoose.connect(process.env.MONGO_URL)
     console.log("error connecting to database")
 })
 
-app.get("/",
-    (req, res)=>{
-        Student.find().then(
-            (data)=>{
-                res.json(data)
-            }
-        )
-    }
-)
-
-app.delete("/",
-    (req, res)=>{
-        res.json(
-            {
-                message : "this is a delete request"
-            }
-        )
-    }
-)
-app.post("/",
-    (req, res)=>{
-        console.log(req.body);
-
-        const student = new Student({
-            name : req.body.name,
-            age : req.body.age,
-            stream : req.body.stream,
-            email : req.body.email
-        })
-
-        student.save().then(()=>{
-            res.json(({
-                message : "student data added successfully"
-            }))
-
-        }).catch(()=>{
-            res.json({
-                message : "error adding student data"
-            })
-        })
-
-    }
-)
-app.put("/",
-    (req, res)=>{
-        res.json(   
-            {
-                message : "this is a put request"
-            }
-        )
-    }
-)
+app.use("/students", studentRouter)  // Use the student router for routes starting with /students 
+app.use("/products", productRouter)  // Use the product router for routes starting with /products
+app.use("/users", userRouter)  // Use the user router for routes starting with /users
 
 
 app.listen(3000, ()=>{      // Start the server and listen on port 3000
